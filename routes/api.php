@@ -20,8 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 // Lessons
 Route::group(['prefix' => 'lessons'], function () {
     Route::get('/', 'LessonController@index');
-    Route::get('/{id}', 'LessonController@show');
+    Route::get('/{lesson}', 'LessonController@show');
     Route::post('/', 'LessonController@store');
-    Route::put('/{id}', 'LessonController@update');
-    Route::delete('/{id}', 'LessonController@destroy');
+    Route::put('/{lesson}', 'LessonController@update');
+    Route::delete('/{lesson}', 'LessonController@destroy');
 });

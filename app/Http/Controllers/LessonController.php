@@ -154,7 +154,7 @@ class LessonController extends Controller
      *     path="/lessons/{id}",
      *     summary="Get a specified lesson",
      *     tags={"Lessons"},
-     *     operationId="getLessons",
+     *     operationId="showLessons",
      *
      *     @OA\Parameter(
      *          name="id",
@@ -182,7 +182,7 @@ class LessonController extends Controller
      *     )
      * )
      *
-     * @param  Lesson $id
+     * @param  Lesson $lesson
      * @return LessonResources
      */
     public function show(Lesson $lesson)

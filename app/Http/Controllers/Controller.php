@@ -24,4 +24,29 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    /**
+     * @OA\Schema(
+     *     schema="Error",
+     *     type="object",
+     *     @OA\Property(property="message", type="string"),
+     *     @OA\Property(
+     *          property="errors",
+     *          type="object",
+     *          @OA\Property(
+     *              property="title",
+     *              type="array",
+     *              @OA\Items(type="string")
+     *          )
+     *     ),
+     * )
+     */
+
+    /**
+     * @OA\Schema(
+     *   schema="Message",
+     *   type="object",
+     *   @OA\Property(property="message", type="string")
+     * )
+     */
 }
