@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Role as RoleResource;
+
 
 /**
  * User resource
@@ -22,7 +24,8 @@ class User extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email
+            'email' => $this->email,
+            'roles' => RoleResource::collection($this->roles),
         ];
     }
 }

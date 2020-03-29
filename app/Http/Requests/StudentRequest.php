@@ -10,7 +10,7 @@ use Illuminate\Validation\Rule;
  * @package App\Http\Requests
  * @author Alexander Kalksov <munlightshadow@gmail.com>
  */
-class LessonRequest extends FormRequest
+class StudentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -39,20 +39,24 @@ class LessonRequest extends FormRequest
                 ];
             case 'POST':
                 return [
-                    'title' => 'required|string|max:255',
-                    'description' => 'required|string|max:1000',
+                    'name' => 'required|string|max:50',
+                    'last_name' => 'required|string|max:50',
+                    'phone' => 'required|string|max:15|phone_number',
+                    'email' => 'string|max:1000|email',
                 ];
 
             case 'PUT':
                 return [
-                    'title' => [
+                    'name' => [
                         'string',
-                        'max:255',
+                        'max:50',
                     ],
-                    'description' => 'string|max:1000',
+                    'last_name' => 'string|max:50',
+                    'phone' => 'string|max:15|phone_number',
+                    'email' => 'string|max:100|email',
                 ];
             case 'DELETE':
-                return [];                  
+                return [];                
         }
     }
 }

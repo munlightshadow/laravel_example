@@ -93,7 +93,7 @@
                                     "email": {
                                         "description": "User login",
                                         "type": "string",
-                                        "example": "user@test.com"
+                                        "example": "admin@test.com"
                                     },
                                     "password": {
                                         "description": "User login",
@@ -128,6 +128,42 @@
                         }
                     }
                 }
+            }
+        },
+        "/auth/me": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User info",
+                "operationId": "me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthToken"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/auth/logout": {
@@ -173,6 +209,24 @@
                 ],
                 "summary": "Refresh the user token",
                 "operationId": "refreshToken",
+                "requestBody": {
+                    "description": "Refreshy token",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "refresh_token": {
+                                        "description": "Refresh the token",
+                                        "type": "string",
+                                        "example": "token"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -267,7 +321,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -376,7 +435,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -518,6 +582,333 @@
                     }
                 ]
             }
+        },
+        "/student": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get a list of Student",
+                "operationId": "getStudent",
+                "parameters": [
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Sorting column.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "order",
+                        "in": "query",
+                        "description": "Sorting order. Use 'asc' or 'desc'. 'asc' by default.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "countOnPage",
+                        "in": "query",
+                        "description": "Rows count on the page. 10 rows by default.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number. 1 by default.",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "description": "Display a listing of the resource.",
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/StudentRequest"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Add a new student",
+                "operationId": "addStudent",
+                "requestBody": {
+                    "description": "New student",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StudentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/StudentRequest"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/student/{id}": {
+            "get": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Get a specified student",
+                "operationId": "showStudent",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Student ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/StudentRequest"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Update an existing student",
+                "operationId": "updateStudent",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Student ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated data",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StudentRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "object",
+                                            "$ref": "#/components/schemas/StudentRequest"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Delete a student",
+                "operationId": "deleteStudent",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Student ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -568,11 +959,13 @@
                 "properties": {
                     "title": {
                         "description": "Lesson model",
-                        "type": "string"
+                        "type": "string",
+                        "example": "Test title"
                     },
                     "description": {
                         "description": "Lesson model",
-                        "type": "string"
+                        "type": "string",
+                        "example": "Test description"
                     }
                 },
                 "type": "object"
@@ -590,6 +983,57 @@
                     },
                     "description": {
                         "description": "Lesson model",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "StudentRequest": {
+                "properties": {
+                    "name": {
+                        "description": "Student model",
+                        "type": "string",
+                        "example": "Jhon"
+                    },
+                    "last_name": {
+                        "description": "Student model",
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "phone": {
+                        "description": "Student model",
+                        "type": "string",
+                        "example": "+71112223344"
+                    },
+                    "email": {
+                        "description": "Student model",
+                        "type": "string",
+                        "example": "student@test.com"
+                    }
+                },
+                "type": "object"
+            },
+            "StudentResponse": {
+                "properties": {
+                    "id": {
+                        "description": "Student model",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "name": {
+                        "description": "Student model",
+                        "type": "string"
+                    },
+                    "last_name": {
+                        "description": "Student model",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "description": "Student model",
+                        "type": "string"
+                    },
+                    "email": {
+                        "description": "Student model",
                         "type": "string"
                     }
                 },

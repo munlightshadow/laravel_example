@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 use App\Models\User;
+use App\Models\Role;
 
 use App\Http\Resources\User as UserResources;
 
@@ -41,7 +43,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'registration']]);
+        $this->middleware('auth:api', ['except' => ['login', 'registration', 'refresh']]);
     }
 
 
@@ -98,9 +100,9 @@ class AuthController extends Controller
         $credentials['password'] = bcrypt($request->password);
         $user = User::create($credentials);
 
-        // $user
-        //    ->roles()
-        //    ->attach(Role::where('name', $role)->first());
+        $user
+           ->roles()
+           ->attach(Role::where('name', 'user')->first());        
 
         return new UserResources($user);
     }
@@ -121,7 +123,7 @@ class AuthController extends Controller
      *             mediaType="application/json",
      *             @OA\Schema(
      *                  type="object",
-     *                  @OA\Property(property="email", type="string", example="user@test.com"),
+     *                  @OA\Property(property="email", type="string", example="admin@test.com"),
      *                  @OA\Property(property="password", type="string", example="qweqwe")
      *             )
      *         )
@@ -158,6 +160,39 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
+
+    /**
+     * User info
+     *
+     * @OA\Post(
+     *     path="/auth/me",
+     *     security={{"bearerAuth":{}}},
+     *     summary="User info",
+     *     tags={"Authentication"},
+     *     operationId="me",
+     *
+     *     @OA\Response(
+     *          response=200,
+     *          description="OK",
+     *          @OA\JsonContent(ref="#/components/schemas/AuthToken")
+     *     ),
+     *
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthorized",
+     *          @OA\JsonContent(ref="#/components/schemas/Message")
+     *     ),
+     * )
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */  
+    public function me(Request $request)
+    {
+        $request->user()->authorizeRoles(['admin', 'user']);
+
+        return new UserResources($this->guard()->user());
+    }    
 
     /**
      * User logout
@@ -203,6 +238,18 @@ class AuthController extends Controller
      *     tags={"Authentication"},
      *     operationId="refreshToken",
      *
+     *     @OA\RequestBody(
+     *         description="Refreshy token",
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                  type="object",
+     *                  @OA\Property(property="refresh_token", type="string", example="token"),
+     *             )
+     *         )
+     *     ),
+     *
      *     @OA\Response(
      *          response=200,
      *          description="OK",
@@ -222,9 +269,26 @@ class AuthController extends Controller
      *
      * @return JsonResponse
      */
-    public function refresh()
+    public function refresh(Request $request)
     {
-        return $this->respondWithToken($this->guard()->refresh());
+        $request->validate([
+            'refresh_token' => 'required',
+        ]);
+
+        $data = $request->only('refresh_token');
+        $refreshToken = $data['refresh_token'];
+
+        if($user_id = Cache::get('refresh_token.'.$refreshToken)){
+
+            $user = User::findOrFail($user_id);
+            $this->guard()->login($user);
+
+            Cache::forget('refresh_token.'.$refreshToken);
+
+            return $this->respondWithToken($this->guard()->refresh());
+
+        };
+        return response()->json(['error' => 'Unauthorized'], 401);
     }
 
     /**
@@ -235,10 +299,18 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+        do {
+            $refresh_token = bcrypt(str_random(60));
+        } while (Cache::has('refresh_token.'.$refresh_token));
+
+        Cache::put('refresh_token.'.$refresh_token, auth()->id(), config('jwt.refresh_ttl'));
+
         return response()->json([
-            'token' => $token,
+            'access_token' => $token,
+            'refresh_token' => $refresh_token,
             'token_type' => 'bearer',
-            'expires_in' => $this->guard()->factory()->getTTL() * 60
+            'expires_in' => $this->guard()->factory()->getTTL() * 60,
+            'user' => new UserResources(auth()->user()),
         ]);
     }
 

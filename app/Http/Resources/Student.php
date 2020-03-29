@@ -5,11 +5,11 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Lesson resource
+ * Student resource
  * @package App\Http\Resources
  * @author Alexander Kalskov <munlightshadow@gmail.com>
  */
-class Lesson extends JsonResource
+class Student extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,8 +21,10 @@ class Lesson extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
-            'description' => $this->description
+            'name' => $this->name,
+            'last_name' => $this->last_name,
+            'phone' => $this->phone,
+            'email' => $this->email
         ];
     }
 }

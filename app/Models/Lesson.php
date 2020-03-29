@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  * @OA\Schema(
  *   schema="LessonRequest",
  *   type="object",
- *   @OA\Property(property="title", type="string"),
- *   @OA\Property(property="description", type="string"),
+ *   @OA\Property(property="title", type="string", example="Test title"),
+ *   @OA\Property(property="description", type="string", example="Test description"),
  * )
  *
  * @OA\Schema(

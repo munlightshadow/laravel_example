@@ -2,32 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LessonRequest;
-use App\Models\Lesson;
+use Illuminate\Http\Request;
+
+use App\Http\Requests\StudentRequest;
+use App\Models\Student;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use App\Http\Resources\Lesson as LessonResources;
+use App\Http\Resources\Student as StudentResources;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-/**
- * Lesson controller
- * @package App\Http\Controllers
- * @author Alexander Kalksov <munlightshadow@gmail.com>
- */
-class LessonController extends BaseController
+class StudentController extends BaseController
 {
     /**
      * Display a listing of the resource.
      *
+     * @return \Illuminate\Http\Response
+     */
+    /**
+     * Display a listing of the resource.
+     *
      * @OA\Get(
-     *     path="/lessons",
-     *     tags={"Lessons"},
-     *     summary="Get a list of lessons",
-     *     operationId="getLessons",
+     *     path="/student",
+     *     tags={"Student"},
+     *     summary="Get a list of Student",
+     *     operationId="getStudent",
      *
      *     @OA\Parameter(
      *          name="sort",
      *          in="query",
-     *          description="Sorting column. Use 'id','title','description'. 'id' by default.",
+     *          description="Sorting column.",
      *          required=false,
      *          @OA\Schema(type="string")
      *     ),
@@ -64,7 +66,7 @@ class LessonController extends BaseController
      *              @OA\Property(
      *                  property="data",
      *                  type="array",
-     *                  @OA\Items(ref="#/components/schemas/LessonRequest")
+     *                  @OA\Items(ref="#/components/schemas/StudentRequest")
      *              )
      *          )
      *     ),
@@ -76,8 +78,8 @@ class LessonController extends BaseController
      *
      * @param LessonRequest $request
      * @return AnonymousResourceCollection
-     */
-    public function index(LessonRequest $request)
+     */    
+    public function index(StudentRequest $request)
     {
         $request->user()->authorizeRoles(['admin', 'user']);
 
@@ -85,26 +87,42 @@ class LessonController extends BaseController
         $order = $request->get('order', 'asc');
         $countOnPage = $request->get('countOnPage', 10);
 
-        $query = Lesson::orderBy($sort, $order);
+        $query = Student::orderBy($sort, $order);
 
-        return LessonResources::collection($query->paginate($countOnPage));
+        return StudentResources::collection($query->paginate($countOnPage));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
     /**
      * Store a newly created resource in storage.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    /**
+     * Store a newly created resource in storage.
+     *
      * @OA\Post(
-     *     path="/lessons",
-     *     summary="Add a new lesson",
-     *     tags={"Lessons"},
-     *     operationId="addLessons",
+     *     path="/student",
+     *     summary="Add a new student",
+     *     tags={"Student"},
+     *     operationId="addStudent",
      *
      *     @OA\RequestBody(
-     *         description="New lessons",
+     *         description="New student",
      *         required=true,
      *         @OA\MediaType(
      *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/LessonRequest")
+     *             @OA\Schema(ref="#/components/schemas/StudentRequest")
      *         )
      *     ),
      *
@@ -114,7 +132,7 @@ class LessonController extends BaseController
      *          @OA\JsonContent(
      *              type="object",
      *              @OA\Property(
-     *                  property="data", type="object", ref="#/components/schemas/LessonRequest"
+     *                  property="data", type="object", ref="#/components/schemas/StudentRequest"
      *              )
      *          )
      *     ),
@@ -136,29 +154,35 @@ class LessonController extends BaseController
      *     }
      * )
      *
-     * @param  LessonRequest $request
-     * @return LessonResources
-     */
-    public function store(LessonRequest $request)
+     * @param  StudentRequest $request
+     * @return StudentResources
+     */    
+    public function store(StudentRequest $request)
     {
         $request->user()->authorizeRoles(['admin']);
 
-        $data = Lesson::create($request->validated());
-        return new LessonResources($data);
+        $data = Student::create($request->validated());
+        return new StudentResources($data);
     }
 
     /**
      * Display the specified resource.
      *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    /**
+     * Display the specified resource.
+     *
      * @OA\Get(
-     *     path="/lessons/{id}",
-     *     summary="Get a specified lesson",
-     *     tags={"Lessons"},
-     *     operationId="showLessons",
+     *     path="/student/{id}",
+     *     summary="Get a specified student",
+     *     tags={"Student"},
+     *     operationId="showStudent",
      *
      *     @OA\Parameter(
      *          name="id",
-     *          description="lesson ID",
+     *          description="Student ID",
      *          required=true,
      *          in="path",
      *          @OA\Schema(type="integer")
@@ -170,7 +194,7 @@ class LessonController extends BaseController
      *          @OA\JsonContent(
      *              type="object",
      *              @OA\Property(
-     *                  property="data", type="object", ref="#/components/schemas/LessonRequest"
+     *                  property="data", type="object", ref="#/components/schemas/StudentRequest"
      *              )
      *          )
      *     ),
@@ -187,28 +211,46 @@ class LessonController extends BaseController
      * )
      *
      *
-     * @param  Lesson $lesson
-     * @return LessonResources
-     */
-    public function show(Lesson $lesson)
+     * @param  Student $student
+     * @return StudentRequest
+     */    
+    public function show(StudentRequest $request, Student $student)
     {
         $request->user()->authorizeRoles(['admin', 'user']);
 
-        return new LessonResources($lesson);
+        return new StudentResources($student);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    /**
+     * Update the specified resource in storage.
+     *
      * * @OA\Put(
-     *     path="/lessons/{id}",
-     *     summary="Update an existing lesson",
-     *     tags={"Lessons"},
-     *     operationId="updateLessons",
+     *     path="/student/{id}",
+     *     summary="Update an existing student",
+     *     tags={"Student"},
+     *     operationId="updateStudent",
      *
      *     @OA\Parameter(
      *          name="id",
-     *          description="Lessons ID",
+     *          description="Student ID",
      *          required=true,
      *          in="path",
      *          @OA\Schema(type="integer")
@@ -219,7 +261,7 @@ class LessonController extends BaseController
      *         required=false,
      *         @OA\MediaType(
      *             mediaType="application/json",
-     *             @OA\Schema(ref="#/components/schemas/LessonRequest")
+     *             @OA\Schema(ref="#/components/schemas/StudentRequest")
      *         )
      *     ),
      *
@@ -229,7 +271,7 @@ class LessonController extends BaseController
      *          @OA\JsonContent(
      *              type="object",
      *              @OA\Property(
-     *                  property="data", type="object", ref="#/components/schemas/LessonRequest"
+     *                  property="data", type="object", ref="#/components/schemas/StudentRequest"
      *              )
      *          )
      *     ),
@@ -257,30 +299,30 @@ class LessonController extends BaseController
      *     }
      * )
      *
-     * @param  LessonRequest $request
-     * @param  Lesson $lesson
-     * @return LessonResources
+     * @param  StudentRequest $request
+     * @param  Student $student
+     * @return StudentResources
      */
-    public function update(LessonRequest $request, Lesson $lesson)
+    public function update(StudentRequest $request, Student $student)
     {
         $request->user()->authorizeRoles(['admin']);
 
-        $lesson->update($request->only(['title', 'description']));
-        return new LessonResources($lesson);
+        $student->update($request->only(['name', 'last_name', 'phone', 'email']));
+        return new StudentResources($student);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @OA\Delete(
-     *     path="/lessons/{id}",
-     *     summary="Delete a lesson",
-     *     tags={"Lessons"},
-     *     operationId="deleteLessons",
+     *     path="/student/{id}",
+     *     summary="Delete a student",
+     *     tags={"Student"},
+     *     operationId="deleteStudent",
      *
      *     @OA\Parameter(
      *          name="id",
-     *          description="Lesson ID",
+     *          description="Student ID",
      *          required=true,
      *          in="path",
      *          @OA\Schema(type="integer")
@@ -314,15 +356,15 @@ class LessonController extends BaseController
      *     }
      * )
      *
-     * @param Lesson $lesson
+     * @param Student $student
      * @return JsonResponse
      * @throws \Exception
      */
-    public function destroy(LessonRequest $request, Lesson $lesson)
+    public function destroy(StudentRequest $request, Student $student)
     {
         $request->user()->authorizeRoles(['admin']);
 
-        $lesson->delete();
+        $student->delete();
         return response()->json(null, 204);
     }
 }

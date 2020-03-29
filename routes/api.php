@@ -24,7 +24,7 @@ Route::group([
     Route::post('registration', 'AuthController@registration');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
-    // Route::post('me', 'AuthController@me');
+    Route::post('me', 'AuthController@me');
 });
 
 // Lessons
@@ -34,4 +34,13 @@ Route::group(['prefix' => 'lessons'], function () {
     Route::post('/', 'LessonController@store');
     Route::put('/{lesson}', 'LessonController@update');
     Route::delete('/{lesson}', 'LessonController@destroy');
+});
+
+// Student
+Route::group(['prefix' => 'student'], function () {
+    Route::get('/', 'StudentController@index');
+    Route::get('/{student}', 'StudentController@show');
+    Route::post('/', 'StudentController@store');
+    Route::put('/{student}', 'StudentController@update');
+    Route::delete('/{student}', 'StudentController@destroy');
 });
