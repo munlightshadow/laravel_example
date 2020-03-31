@@ -25,6 +25,8 @@ Route::group([
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
+    Route::post('recovery', 'ForgotPasswordController@recovery');
+    Route::post('reset', 'ResetPasswordController@reset')->name('password.reset');
 });
 
 // Lessons

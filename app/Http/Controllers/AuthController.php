@@ -65,8 +65,8 @@ class AuthController extends Controller
      *                  type="object",
      *                  @OA\Property(property="name", type="string", example="user"),
      *                  @OA\Property(property="email", type="string", example="user@test.com"),
-     *                  @OA\Property(property="password", type="string", example="qweqwe"),
-     *                  @OA\Property(property="c_password", type="string", example="qweqwe")
+     *                  @OA\Property(property="password", type="string", example="qweqweqwe"),
+     *                  @OA\Property(property="c_password", type="string", example="qweqweqwe")
      *             )
      *         )
      *     ),
@@ -124,7 +124,7 @@ class AuthController extends Controller
      *             @OA\Schema(
      *                  type="object",
      *                  @OA\Property(property="email", type="string", example="admin@test.com"),
-     *                  @OA\Property(property="password", type="string", example="qweqwe")
+     *                  @OA\Property(property="password", type="string", example="qweqweqwe")
      *             )
      *         )
      *     ),

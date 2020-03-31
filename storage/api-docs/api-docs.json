@@ -39,12 +39,12 @@
                                     "password": {
                                         "description": "User login",
                                         "type": "string",
-                                        "example": "qweqwe"
+                                        "example": "qweqweqwe"
                                     },
                                     "c_password": {
                                         "description": "User login",
                                         "type": "string",
-                                        "example": "qweqwe"
+                                        "example": "qweqweqwe"
                                     }
                                 },
                                 "type": "object"
@@ -98,7 +98,7 @@
                                     "password": {
                                         "description": "User login",
                                         "type": "string",
-                                        "example": "qweqwe"
+                                        "example": "qweqweqwe"
                                     }
                                 },
                                 "type": "object"
@@ -254,6 +254,75 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/auth/recovery": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Recovery the user password",
+                "operationId": "recoveryPassword",
+                "requestBody": {
+                    "description": "User email",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "Send recovery information to user email",
+                                        "type": "string",
+                                        "example": "admin@test.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/lessons": {
@@ -581,6 +650,79 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/auth/reset": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Reset the user password",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "description": "Reset password data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "token": {
+                                        "description": "Reset the given user password",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "Reset the given user password",
+                                        "type": "string",
+                                        "example": "user@test.com"
+                                    },
+                                    "password": {
+                                        "description": "Reset the given user password",
+                                        "type": "string",
+                                        "example": "qweqweqwe"
+                                    },
+                                    "password_confirmation": {
+                                        "description": "Reset the given user password",
+                                        "type": "string",
+                                        "example": "qweqweqwe"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthToken"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Bad Gateway",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Message"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/student": {
