@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
 use App\Models\Role;
@@ -97,9 +98,9 @@ class AuthController extends Controller
         ]);
 
         $credentials = $request->only('name', 'email', 'password');
-        $credentials['password'] = bcrypt($request->password);
+        $credentials['password'] = bcrypt($credentials['password']);
         $user = User::create($credentials);
-
+        
         $user
            ->roles()
            ->attach(Role::where('name', 'user')->first());        
